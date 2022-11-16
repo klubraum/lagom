@@ -4,11 +4,14 @@
 
 package com.lightbend.lagom.scaladsl.testkit
 
-import java.io.File
+import akka.actor.ActorSystem
+import akka.pattern.after
+import akka.actor.Scheduler
+
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-
 import akka.annotation.ApiMayChange
+import akka.stream.alpakka.cassandra.scaladsl.CassandraSessionRegistry
 import com.lightbend.lagom.devmode.ssl.LagomDevModeSSLHolder
 import com.lightbend.lagom.internal.persistence.testkit.AwaitPersistenceInit.awaitPersistenceInit
 import com.lightbend.lagom.internal.persistence.testkit.PersistenceTestConfig._
@@ -18,6 +21,7 @@ import com.lightbend.lagom.internal.testkit.TestkitSslSetup
 import com.lightbend.lagom.scaladsl.server.LagomApplication
 import com.lightbend.lagom.scaladsl.server.LagomApplicationContext
 import com.lightbend.lagom.scaladsl.server.RequiresLagomServicePort
+
 import javax.net.ssl.SSLContext
 import play.api.ApplicationLoader.Context
 import play.api.inject.DefaultApplicationLifecycle
@@ -28,6 +32,10 @@ import play.core.server.Server
 import play.core.server.ServerConfig
 import play.core.server.ServerProvider
 
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.Await
+import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import scala.util.Try
 import scala.util.control.NonFatal
@@ -54,7 +62,7 @@ object ServiceTest {
      *                cluster.
      * @return A copy of this setup.
      */
-    def withCassandra(enabled: Boolean): Setup
+    def withCassandra(enabled: Boolean, awaitTableCreation: Option[String] = None): Setup
 
     /**
      * Enable Cassandra.
@@ -141,17 +149,23 @@ object ServiceTest {
      * Whether SSL is enabled.
      */
     def ssl: Boolean
+
+    /**
+     * The name of the table to wait for creation before starting the server.
+     */
+    def awaitTableCreation: Option[String]
   }
 
   private case class SetupImpl(
       cassandra: Boolean = false,
       jdbc: Boolean = false,
       cluster: Boolean = false,
-      ssl: Boolean = false
+      ssl: Boolean = false,
+      awaitTableCreation: Option[String] = None
   ) extends Setup {
-    override def withCassandra(enabled: Boolean): Setup = {
+    override def withCassandra(enabled: Boolean, awaitTableCreation: Option[String] = None): Setup = {
       if (enabled) {
-        copy(cassandra = true, cluster = true)
+        copy(cassandra = true, cluster = true, awaitTableCreation = awaitTableCreation)
       } else {
         copy(cassandra = false)
       }
@@ -345,8 +359,27 @@ object ServiceTest {
 
     if (setup.cassandra || setup.jdbc) {
       awaitPersistenceInit(lagomApplication.actorSystem)
+      setup.awaitTableCreation.foreach(tableName => awaitTableCreation(tableName, lagomApplication.actorSystem))
     }
 
     new TestServer[T](lagomApplication, server, sslSetup.clientSslContext)
   }
+
+  private def awaitTableCreation(tableName: String, system: ActorSystem): Unit = {
+    val keyspace                      = system.settings.config.getString("lagom.persistence.read-side.cassandra.keyspace")
+    val session                       = CassandraSessionRegistry(system).sessionFor("akka.persistence.cassandra")
+    implicit val ec: ExecutionContext = system.dispatcher
+    implicit val s: Scheduler         = system.scheduler
+    val future =
+      after(5.seconds, system.scheduler)(
+        retry(session.selectOne(s"SELECT * FROM $keyspace.$tableName LIMIT 1"), 5.seconds, 5)
+      )
+    Await.result(future, 60.seconds)
+  }
+
+  def retry[T](f: => Future[T], delay: FiniteDuration, retries: Int)(
+      implicit ec: ExecutionContext,
+      s: Scheduler
+  ): Future[T] =
+    f.recoverWith { case _ if retries > 0 => after(delay, s)(retry(f, delay, retries - 1)) }
 }
