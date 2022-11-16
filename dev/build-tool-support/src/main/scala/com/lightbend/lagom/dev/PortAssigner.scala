@@ -38,7 +38,7 @@ object PortAssigner {
       projectNames: Seq[ProjectName],
       enableSsl: Boolean
   ): Map[ProjectName, Port] = {
-    val lagomProjects = projectNames.to[immutable.SortedSet]
+    val lagomProjects = projectNames.distinct.sorted
 
     val projects =
       // duplicate the project list by adding the tls variant

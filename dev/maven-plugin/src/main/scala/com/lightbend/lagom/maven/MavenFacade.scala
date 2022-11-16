@@ -150,11 +150,11 @@ class MavenFacade @Inject() (
   }
 
   private def toDependencies(depResult: DependencyResult): Seq[Dependency] = {
-    depResult.getArtifactResults.asScala.map(_.getRequest.getDependencyNode.getDependency)
+    depResult.getArtifactResults.asScala.map(_.getRequest.getDependencyNode.getDependency).toSeq
   }
 
   def locateServices: Seq[MavenProject] = {
-    session.getAllProjects.asScala.filter(isService)
+    session.getAllProjects.asScala.filter(isService).toSeq
   }
 
   private def isService(project: MavenProject): Boolean = {

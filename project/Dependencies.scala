@@ -12,11 +12,11 @@ object Dependencies {
   object Versions {
     // Version numbers
 
-    val Scala210 = "2.10.7"
+    //val Scala210 = "2.10.7"
     val Scala212 = "2.12.13"
     val Scala213 = "2.13.10"
     val Scala    = Seq(Scala212, Scala213)
-    val SbtScala = Seq(Scala212, Scala210)
+    val SbtScala = Seq(Scala212)
 
     // If you update the version of Play, you probably need to update the other Play* variables.
     val Play             = "2.8.18" // sync with docs/build.sbt
@@ -48,7 +48,7 @@ object Dependencies {
     val MavenResolver        = "1.4.1"
     val Netty                = "4.1.63.Final"
     val NettyReactiveStreams = "2.0.5"
-    val Kafka                = "2.1.1"
+    val Kafka                = "2.4.1"
     // adapt links in (java/scala)/KafkaClient.md for minor version changes
     val AlpakkaKafka  = "4.0.0"
     val Curator       = "2.12.0"

@@ -61,7 +61,7 @@ class StartCassandraMojo @Inject() (
         classpath = cp.map(_.getFile),
         port = cassandraPort,
         cleanOnStart = cassandraCleanOnStart,
-        jvmOptions = cassandraJvmOptions.asScala,
+        jvmOptions = cassandraJvmOptions.asScala.toSeq,
         yamlConfig = this.cassandraYamlFile,
         maxWaiting = cassandraMaxBootWaitingSeconds.seconds
       )
@@ -137,7 +137,7 @@ class StartKafkaMojo @Inject() (
         kafkaPort = kafkaPort,
         zooKeeperPort = zookeeperPort,
         kafkaPropertiesFile = kafkaPropertiesFile,
-        jvmOptions = kafkaJvmOptions.asScala,
+        jvmOptions = kafkaJvmOptions.asScala.toSeq,
         targetDir = targetDir,
         cleanOnStart = kafkaCleanOnStart
       )

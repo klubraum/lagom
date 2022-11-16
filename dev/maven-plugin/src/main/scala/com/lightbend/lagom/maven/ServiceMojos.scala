@@ -94,7 +94,7 @@ class StartMojo @Inject() (serviceManager: ServiceManager, session: MavenSession
       if (!file.isAbsolute) {
         new File(project.getBasedir, dir)
       } else file
-    }
+    }.toSeq
 
     if (!lagomService && !playService) {
       sys.error(s"${project.getArtifactId} is not a Lagom service!")
@@ -110,7 +110,7 @@ class StartMojo @Inject() (serviceManager: ServiceManager, session: MavenSession
       if (servicePort == -1) {
         val portMap = serviceManager.getPortMap(
           servicePortRange,
-          externalProjects.asScala.map(d => d.artifact.getGroupId + ":" + d.artifact.getArtifactId),
+          externalProjects.asScala.toSeq.map(d => d.artifact.getGroupId + ":" + d.artifact.getArtifactId),
           serviceEnableSsl
         )
         val portName = {
@@ -210,7 +210,7 @@ class StartExternalProjects @Inject() (serviceManager: ServiceManager, session: 
 
     lazy val portMap = serviceManager.getPortMap(
       servicePortRange,
-      externalProjects.asScala.map(d => d.artifact.getGroupId + ":" + d.artifact.getArtifactId),
+      externalProjects.asScala.map(d => d.artifact.getGroupId + ":" + d.artifact.getArtifactId).toSeq,
       serviceEnableSsl
     )
 

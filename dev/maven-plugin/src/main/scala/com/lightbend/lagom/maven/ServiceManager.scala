@@ -168,7 +168,7 @@ class ServiceManager @Inject() (
           scalaClassLoader,
           projectDependencies.external.map(_.getFile),
           () => {
-            reloadCompile(buildProjects, serviceClassPath)
+            reloadCompile(buildProjects.toSeq, serviceClassPath)
           },
           identity,
           sourceDirsToWatch,
