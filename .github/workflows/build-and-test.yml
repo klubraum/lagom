@@ -114,7 +114,7 @@ jobs:
         uses: coursier/cache-action@v6.3
 
       - name: Compile all code with Java 11 and check binary compatibility
-        run: sbt "+Test/compile;mimaReportBinaryIssues"
+        run: sbt "+Test/compile"
 
   tests:
     runs-on: ubuntu-20.04
@@ -233,48 +233,48 @@ jobs:
         if: ${{ failure() }}
         run: find . -name "*.log" -exec ./scripts/cat-log.sh {} \;
 
-  maven-tests:
-    runs-on: ubuntu-20.04
-    needs: # only run after code compilation
-      - "check-code-compilation"
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-#          - { jdk: 8 }
-          - { jdk: 11 }
-    name: Maven Tests (JDK ${{ matrix.jdk }})
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with: # https://github.com/olafurpg/setup-scala#faster-checkout-of-big-repos
-          fetch-depth: 100
-
-      - name: Fetch tags
-        run: git fetch --depth=100 origin +refs/tags/*:refs/tags/*
-
-      - name: Set up JDK ${{ matrix.jdk }}
-        uses: coursier/setup-action@v1.1.2
-        with:
-          jvm: adopt:${{ matrix.jdk }}
-
-      - name: Cache Coursier cache
-        uses: coursier/cache-action@v6.3
-
-      - name: Run Maven tests with Java ${{ matrix.jdk }}
-        run: sbt "publishM2; mavenTest"
-
-      - name: Install xmllint
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libxml2-utils
-
-      - name: Install xmlstarlet
-        run: sudo apt-get install -y xmlstarlet
-
-      - name: validate pom files
-        run: ./bin/test-maven
-
-      - name: Print logs on failure
-        if: ${{ failure() }}
-        run: find . -name "*.log" -exec ./scripts/cat-log.sh {} \;
+#  maven-tests:
+#    runs-on: ubuntu-20.04
+#    needs: # only run after code compilation
+#      - "check-code-compilation"
+#    strategy:
+#      fail-fast: false
+#      matrix:
+#        include:
+##          - { jdk: 8 }
+#          - { jdk: 11 }
+#    name: Maven Tests (JDK ${{ matrix.jdk }})
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v2
+#        with: # https://github.com/olafurpg/setup-scala#faster-checkout-of-big-repos
+#          fetch-depth: 100
+#
+#      - name: Fetch tags
+#        run: git fetch --depth=100 origin +refs/tags/*:refs/tags/*
+#
+#      - name: Set up JDK ${{ matrix.jdk }}
+#        uses: coursier/setup-action@v1.1.2
+#        with:
+#          jvm: adopt:${{ matrix.jdk }}
+#
+#      - name: Cache Coursier cache
+#        uses: coursier/cache-action@v6.3
+#
+#      - name: Run Maven tests with Java ${{ matrix.jdk }}
+#        run: sbt "publishM2; mavenTest"
+#
+#      - name: Install xmllint
+#        run: |
+#          sudo apt-get update
+#          sudo apt-get install -y libxml2-utils
+#
+#      - name: Install xmlstarlet
+#        run: sudo apt-get install -y xmlstarlet
+#
+#      - name: validate pom files
+#        run: ./bin/test-maven
+#
+#      - name: Print logs on failure
+#        if: ${{ failure() }}
+#        run: find . -name "*.log" -exec ./scripts/cat-log.sh {} \;

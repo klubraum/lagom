@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) Lightbend Inc. <https://www.lightbend.com>
+ */
+
 package akka.discovery.dns
 
 import akka.actor.ActorRef
