@@ -2,12 +2,14 @@ name: Publish
 
 on:
   push:
+    branches:
+      - main
     tags: ["*"]
 
 jobs:
   release:
     # runs on main repo only
-    if: github.repository == 'lagom/lagom'
+    if: github.repository == 'klubraum/lagom'
     name: Release
     environment: release
     runs-on: ubuntu-20.04
@@ -25,8 +27,6 @@ jobs:
 
       - name: Publish
         env:
-          PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
-          PGP_SECRET: ${{ secrets.PGP_SECRET }}
-          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
-          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CI_RELEASE: +publish
         run: sbt ci-release

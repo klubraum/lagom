@@ -45,28 +45,28 @@ jobs:
              multi-jvm:headerCheck \
              checkAkkaModuleVersions
 
-  documentation-docs:
-    name: Check Docs
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with: # https://github.com/olafurpg/setup-scala#faster-checkout-of-big-repos
-          fetch-depth: 100
-
-      - name: Fetch tags
-        run: git fetch --depth=100 origin +refs/tags/*:refs/tags/*
-
-      - name: Set up JDK 8
-        uses: coursier/setup-action@v1.1.2
-        with:
-          jvm: adopt:8 # need jdk8 to build docs
-
-      - name: Cache Coursier cache
-        uses: coursier/cache-action@v6.3
-
-      - name: Create all API docs for artifacts/website and all reference docs
-        run: ./bin/test-documentation
+#  documentation-docs:
+#    name: Check Docs
+#    runs-on: ubuntu-20.04
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v2
+#        with: # https://github.com/olafurpg/setup-scala#faster-checkout-of-big-repos
+#          fetch-depth: 100
+#
+#      - name: Fetch tags
+#        run: git fetch --depth=100 origin +refs/tags/*:refs/tags/*
+#
+#      - name: Set up JDK 8
+#        uses: coursier/setup-action@v1.1.2
+#        with:
+#          jvm: adopt:8 # need jdk8 to build docs
+#
+#      - name: Cache Coursier cache
+#        uses: coursier/cache-action@v6.3
+#
+#      - name: Create all API docs for artifacts/website and all reference docs
+#        run: ./bin/test-documentation
 
   # documentation-tests:
   #   name: Run documentation tests
@@ -124,9 +124,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { jdk: 8,  scala: 2.12 }
-          - { jdk: 8,  scala: 2.13 }
-          - { jdk: 11, scala: 2.12 }
+#          - { jdk: 8,  scala: 2.12 }
+#          - { jdk: 8,  scala: 2.13 }
+#          - { jdk: 11, scala: 2.12 }
           - { jdk: 11, scala: 2.13 }
     name: Build and Test (Scala ${{ matrix.scala }} & JDK ${{ matrix.jdk }})
     steps:
@@ -163,9 +163,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { jdk: 8,  scala: 2.12 }
-          - { jdk: 8,  scala: 2.13 }
-          - { jdk: 11, scala: 2.12 }
+#          - { jdk: 8,  scala: 2.12 }
+#          - { jdk: 8,  scala: 2.13 }
+#          - { jdk: 11, scala: 2.12 }
           - { jdk: 11, scala: 2.13 }
     name: MultiJvm Test (Scala ${{ matrix.scala }} & JDK ${{ matrix.jdk }})
     steps:
@@ -203,8 +203,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { jdk: 8,  scala: 2.10 }
-          - { jdk: 8,  scala: 2.12 }
+#          - { jdk: 8,  scala: 2.10 }
+#          - { jdk: 8,  scala: 2.12 }
           - { jdk: 11, scala: 2.12 }
     name: sbt Scripted Tests (Scala ${{ matrix.scala }} & JDK ${{ matrix.jdk }})
     steps:
@@ -241,7 +241,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { jdk: 8 }
+#          - { jdk: 8 }
           - { jdk: 11 }
     name: Maven Tests (JDK ${{ matrix.jdk }})
     steps:

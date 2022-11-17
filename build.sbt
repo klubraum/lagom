@@ -1,6 +1,5 @@
 import java.net.InetSocketAddress
 import java.nio.channels.ServerSocketChannel
-
 import com.typesafe.sbt.SbtMultiJvm.MultiJvmKeys
 import com.typesafe.sbt.SbtMultiJvm.MultiJvmKeys.MultiJvm
 import com.typesafe.sbt.SbtMultiJvm.MultiJvmKeys._
@@ -75,7 +74,9 @@ def common: Seq[Setting[_]] = evictionSettings ++ Seq(
     "-parameters",
     "-Xlint:unchecked",
     "-Xlint:deprecation"
-  )
+  ),
+  githubOwner := "klubraum",
+  githubRepository := "lagom",
 )
 
 // Customise sbt-dynver's behaviour to make it work with Lagom's tags (which aren't v-prefixed)
