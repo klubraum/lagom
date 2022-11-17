@@ -35,6 +35,8 @@ jobs:
       - name: Code style check, headers and Akka versions
         # Run locally with: sbt 'verifyCodeStyle ; mimaReportBinaryIssues'
         # TODO: add versionSyncCheck when running CRON jobs
+        env:
+          GITHUB_TOKEN: "dummy-token-for-sbt-to-run"
         run: |
          sbt +headerCheckAll \
              +scalafmtCheckAll \
@@ -114,6 +116,8 @@ jobs:
         uses: coursier/cache-action@v6.3
 
       - name: Compile all code with Java 11 and check binary compatibility
+        env:
+          GITHUB_TOKEN: "dummy-token-for-sbt-to-run"
         run: sbt "+Test/compile"
 
   tests:
@@ -149,6 +153,7 @@ jobs:
       - name: Run tests with Scala ${{ matrix.scala }} and Java ${{ matrix.jdk }}
         env:
           SCALA_VERSION: ${{ matrix.scala }}
+          GITHUB_TOKEN: "dummy-token-for-sbt-to-run"
         run: ./bin/test-2.1x
 
       - name: Print logs on failure
@@ -188,6 +193,7 @@ jobs:
       - name: Run multi-jvm tests with Scala ${{ matrix.scala }} and Java ${{ matrix.jdk }}
         env:
           SCALA_VERSION: ${{ matrix.scala }}
+          GITHUB_TOKEN: "dummy-token-for-sbt-to-run"
         run: ./bin/test-multi-jvm-2.1x
 
       - name: Print logs on failure
@@ -227,6 +233,7 @@ jobs:
       - name: Run sbt-scripted tests with Scala ${{ matrix.scala }} and JDK ${{ matrix.jdk }}
         env:
           SCALA_VERSION: ${{ matrix.scala }}
+          GITHUB_TOKEN: "dummy-token-for-sbt-to-run"
         run: ./bin/test-sbt
 
       - name: Print logs on failure
