@@ -60,6 +60,7 @@ private[lagom] object PersistenceTestConfig {
       "datastax-java-driver.basic.request.timeout"                          -> "5s",
       "lagom.persistence.read-side.cassandra.keyspace-autocreate"           -> "true",
       "lagom.persistence.read-side.cassandra.tables-autocreate"             -> "true",
+      "akka.persistence.cassandra.service-discovery.name"                   -> "",
       "akka.persistence.cassandra.journal.keyspace-autocreate"              -> "true",
       "akka.persistence.cassandra.journal.tables-autocreate"                -> "true",
       "akka.persistence.cassandra.journal.keyspace"                         -> keyspacePrefix,
